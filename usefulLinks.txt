@@ -1,0 +1,12 @@
+
+
+
+Index Based List Operations Using folds in Haskell:
+http://umairsaeed.com/blog/2015/05/16/index-based-list-operations-using-folds-in-haskell/
+
+Examples of the operations in the above website:
+https://gist.github.com/umairsd/cdcb397941762fe02d05
+
+Useful Haskell Functions:
+http://www.cse.unsw.edu.au/~en1000/haskell/inbuilt.html#zip
+
