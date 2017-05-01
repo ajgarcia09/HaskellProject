@@ -86,9 +86,13 @@ isGameOver bd = length intact == 0 where
     is equal to -2 or -1, return True.Return false otherwise
 
 -}
-isHit x y board = if((board !! x !! y) == -1  || (board !! x !! y) == -2)
-                  then True
-                  else False
+isHit x y board
+    |shot == hit = True
+    |shot == miss = True
+    |otherwise = False
+    where shot = board !!x !!y
+          hit = -2
+          miss = -1
 
 {-Hit the square at the position (x,y) of the given board, where x
      and y are 1-based column and row indices. A new board is
@@ -103,11 +107,14 @@ isHit x y board = if((board !! x !! y) == -1  || (board !! x !! y) == -2)
 
 -}   
 
-hitBoard x y board = if((board !! x !!y)==-1 || (board !! x !! y) == -2)
-                     --then return?
-                     if((board!!x!!y)==0)
-                     then    
-
+hitBoard x y board
+    --call isHit and proceed only if false
+    |spot == 0 = markMiss
+    |spot > 0 = markHit
+    otherwise = "Invalid board position"
+    where spot = board !!x!!y
+          miss =     
+          hit = 
 
 
 
