@@ -10,28 +10,24 @@ mkboard n = take n (repeat(take n(repeat 0)))
 board :: [Row]
 board = mkboard 10
 isGameOver :: Int -> [Row] -> Bool
-isGameOver s []            = False
-isGameOver s (x:xs)     = (s == 16) ||  if (x > 0) then (checkIfSunk (s+x) xs) else (checkIfSunk s xs)
+isGameOver s []			= False
+isGameOver s (x:xs) 	= (s == 16) ||  if (x > 0) then (checkIfSunk (s+x) xs) else (checkIfSunk s xs)
 -}
 
 -- Checks all the board and determines if the game is over (v1)
 isGameOver bd = length intact == 0 where
-    intact = [p | p <- all , p > 0] where
-    all = concat bd -- or all = [p | row <- bd , p <- row]
-
-
-{-   Can a ship of size n be placed at the square (x,y) of the given
-     board? X and y are 1-based column and row indices of the start
-     square, and dir denotes the direction (True for horizontal and
-     False for vertical).
-
-   
-
-    
--}
---isShipPlaceable n x y dir board =
-
-
+	intact = [p | p <- all , p > 0] where
+	all = concat bd -- or all = [p | row <- bd , p <- row]
+	
+-- Checks if a ship of length n can be placed at coordinates x y in a board
+-- and position dir
+isShipPlaceable :: Int -> Int -> Int -> Bool -> [[Int]] -> Bool
+isShipPlaceable 0 x y dir board = True
+isShipPlaceable n x y dir board 
+    |(coord == 0)&&(dir == False)&&((n+y) < 11) = isShipPlaceable (n-1) x (y+1) dir board
+    |(coord == 0)&&(dir == True)&&((n+x) < 11) = isShipPlaceable (n-1) (x+1) y dir board
+    |otherwise = False
+        where coord = board !!x !!y
 
 {-   Place a ship of size n at the square (x,y) of the given board
      horizontally or vertically. A new board is returned.
@@ -43,14 +39,12 @@ isGameOver bd = length intact == 0 where
      of board[x][y].
     
      Example: placeShip 3 2 2 True board
-
      isShipPlaceable returned True.
      Go to board[2,2] and update the index with n= 3
      Update the next n indices with n
      board[2][3] = 3
      board[2][4] = 3
      return the board
-
      x 1 2 3 4 5 6 7 8 9 0
      y --------------------
      1| . . . . . . . . . .
@@ -63,11 +57,9 @@ isGameOver bd = length intact == 0 where
      8| . . . . . . . . . .
      9| . . . . . . . . . .
      0| . . . . . . . . . .
-
      else if  direction is vertical, "iterate" through
      list placing n in the each of the n spots below
      board[x][y].
-
      Example: placeShip 4 4 9 False board
      isShipPlaceable returned True.
      Go to board[4][9] and update the index with n=4
@@ -76,7 +68,6 @@ isGameOver bd = length intact == 0 where
      board[6][9] = 4
      board[7][9] = 4
      return the board
-
 -}
 
 --placeShip n x y dir board
@@ -84,7 +75,6 @@ isGameOver bd = length intact == 0 where
 --Checks whether a place (x,y) has been hit on a board
 {- Index into board[x][y]. If element at board[x][y]
     is equal to -2 or -1, return True.Return false otherwise
-
 -}
 isHit x y board
     |shot == hit = True
@@ -104,10 +94,9 @@ isHit x y board
     If board[x][y] is equal to another number (2,3,4,5) mark it
     with a -2 (a hit on a ship).
     Return the board.
-
 -}   
 
-hitBoard x y board
+{- hitBoard x y board
     --call isHit and proceed only if false
     |spot == 0 = markMiss
     |spot > 0 = markHit
@@ -115,6 +104,9 @@ hitBoard x y board
     where spot = board !!x!!y
           miss =     
           hit = 
+-}
+	
+
 
 
 
