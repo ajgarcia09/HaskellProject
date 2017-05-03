@@ -59,7 +59,7 @@ deconcat n list = take n list : deconcat n (drop n list)
 isHit x y board
     |shot < 0 = True
     |otherwise = False
-    where shot = board !!x !!y
+    where shot = board !!y !!x
 
 {-
 	Hit the square at the position (x,y) of the given board, where x
