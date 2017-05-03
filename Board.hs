@@ -1,26 +1,34 @@
+{-
+	Author: Ana Garcia & Cristian Ayub
+	Professor: Dr. Yoonsik Cheon
+	TA: Sheikh Naim
+	Assignment: Project #3 - Functional Programmin Using Haskell
+	Objective: To understand the concepts of
+		functional programming and have a taste of it by writing a small
+		Haskell program.
+	Last updated: 05/03/2017
+-}
+
 module Board where
 
--- Creates a board of size n*n
+{-
+	Creates a board of size n*n
+-}
 type Row = [Int]
 mkboard :: Int -> [Row]
 mkboard n = take n (repeat(take n(repeat 0)))
 
--- Checks all the board and determines if the game is over (v0)
 {-
-board :: [Row]
-board = mkboard 10
-isGameOver :: Int -> [Row] -> Bool
-isGameOver s []			= False
-isGameOver s (x:xs) 	= (s == 16) ||  if (x > 0) then (checkIfSunk (s+x) xs) else (checkIfSunk s xs)
+	Checks all the board and determines if the game is over
 -}
-
--- Checks all the board and determines if the game is over (v1)
 isGameOver bd = length intact == 0 where
 	intact = [p | p <- all , p > 0] where
 	all = concat bd -- or all = [p | row <- bd , p <- row]
 	
--- Checks if a ship of length n can be placed at coordinates x y in a board
--- and position dir
+{-
+	Checks if a ship of length n can be placed at (x,y) in a board
+	and a specific position (dir)
+-}
 isShipPlaceable :: Int -> Int -> Int -> Bool -> [[Int]] -> Bool
 isShipPlaceable 0 x y dir board = True
 isShipPlaceable n x y dir board 
@@ -29,101 +37,72 @@ isShipPlaceable n x y dir board
     |otherwise = False
         where coord = board !!x !!y
 
-{-   Place a ship of size n at the square (x,y) of the given board
-     horizontally or vertically. A new board is returned.
-    
-     First, call isShipPlaceable. If False, return.
-     Else if  isShipPlaceable returned True and direction
-     is horizontal, "iterate" through the board placing
-     n in the each of the n spots to the right
-     of board[x][y].
-    
-     Example: placeShip 3 2 2 True board
-     isShipPlaceable returned True.
-     Go to board[2,2] and update the index with n= 3
-     Update the next n indices with n
-     board[2][3] = 3
-     board[2][4] = 3
-     return the board
-     x 1 2 3 4 5 6 7 8 9 0
-     y --------------------
-     1| . . . . . . . . . .
-     2| . 3 3 3 . . . . . .
-     3| . . . . . . . . . .
-     4| . . . . . . . . 4 .
-     5| . . . . . . . . 4 .
-     6| . . . . . . . . 4 .
-     7| . . . . . . . . 4 .
-     8| . . . . . . . . . .
-     9| . . . . . . . . . .
-     0| . . . . . . . . . .
-     else if  direction is vertical, "iterate" through
-     list placing n in the each of the n spots below
-     board[x][y].
-     Example: placeShip 4 4 9 False board
-     isShipPlaceable returned True.
-     Go to board[4][9] and update the index with n=4
-     Update the next n indices below board[4][9] with n
-     board[5][9] = 4
-     board[6][9] = 4
-     board[7][9] = 4
-     return the board
+{-
+	Places a ship of size n on (x,y) with a specific direction (dir) in the board
 -}
+placeShip :: Int -> Int -> Int -> Bool -> [[Int]] -> [[Int]] 
+placeShip n x y dir board 
+    | (dir == True) = deconcat (length board) (take (index - 1) concatBoard ++ replicate n n ++ drop ((index - 1) + n) concatBoard)
+	| (dir == False) = deconcat (length board) (take (index - 1) concatBoard ++ replaceCell n n ((length board) - 1) (drop (index-1) concatBoard)) where 
+	    index = (y * length board) + (x+1)
+	    concatBoard = concat board 
+replaceCell 0 ship len list = list
+replaceCell n ship len (h:t) = [ship] ++ take (len) t ++ replaceCell (n-1) ship len (drop len t)
 
---placeShip n x y dir board
-
---Checks whether a place (x,y) has been hit on a board
-{- Index into board[x][y]. If element at board[x][y]
-    is equal to -2 or -1, return True.Return false otherwise
--}
-isHit x y board
-    |shot == hit = True
-    |shot == miss = True
-    |otherwise = False
-    where shot = board !!x !!y
-          hit = -2
-          miss = -1
-
-{-Hit the square at the position (x,y) of the given board, where x
-     and y are 1-based column and row indices. A new board is
-     returned.
- 
-    Index into board[x][y]. If board[x][y] is equal to -1 or -2,
-    return, because this spot has already been hit. Otherwise,
-    if board[x][y] is equal to 0, mark this spot with a -1 (a miss)
-    If board[x][y] is equal to another number (2,3,4,5) mark it
-    with a -2 (a hit on a ship).
-    Return the board.
--}   
-
-{- hitBoard x y board
-    --call isHit and proceed only if false
-    |spot == 0 = markMiss
-    |spot > 0 = markHit
-    otherwise = "Invalid board position"
-    where spot = board !!x!!y
-          miss =     
-          hit = 
--}
-	
-
-
-
-
-
-
-
+deconcat :: Int -> [Int] -> [[Int]]
+deconcat n [] = []
+deconcat n list = take n list : deconcat n (drop n list)
 
 {-
+	Checks whether a place (x,y) has been hit on a board
+-}
+isHit x y board
+    |shot < 0 = True
+    |otherwise = False
+    where shot = board !!x !!y
+
+{-
+	Hit the square at the position (x,y) of the given board, where x
+    and y are 1-based column and row indices. A new board is
+    returned.
+-}   
+hitBoard :: Int -> Int -> [[Int]] -> [[Int]]
+hitBoard x y board
+    | shot > 0 = deconcat (length board) (take (index-1) concatBoard ++ [-shot] ++ drop (index) concatBoard) -- if the shot is a hit then (x,y) value becomes negative
+    | shot == 0 = deconcat (length board) (take (index-1) concatBoard ++ [-1] ++ drop (index) concatBoard) -- if the shot is a miss then (x,y) becomes a -1
+    | otherwise = [[]] where  -- if the shot was already made do nothing
+        index = (y * length board) + (x+1)
+        concatBoard = concat board
+        shot = board !!y !!x
+
+{-
+	Draws a board "board" depending of the marker chosen
+-}
+boardToStr marker board = mapM_(putStrLn . marker) board
+
+--Marker 1: Only shows the hits already made
+sqToStr [] = []
+sqToStr (h:t) = (showShots h) ++ " " ++ sqToStr t
+showShots n = if n == -1 then id "O" 				-- If (x,y) was a miss = O
+	else if n < -1 then id "X" 						-- If (x,y) was a hit = X
+	else id "."										-- If (x,y) can be hit = .
+
+--Marker 2: Shows all the hits already made along with the ship positioning
+sqToStrCheat [] = []
+sqToStrCheat (h:t) = (showCheatShots h) ++ " " ++ sqToStrCheat t
+showCheatShots n = if n == 0 then id "." 			-- If (x,y) can be hit = .
+	else if n == -1 then id "O" 					-- If (x,y) was a miss = O
+	else if n < -1 then id "X" 						-- If (x,y) was a hit = X
+	else show n										-- If (x,y) has a ship which can be hit = n (size of such a ship)
+
+
+
+	
+	
+{-
+LEGEND: 
 0: empty
 2..n: ship
 -n..-2: hit
 -1: miss
 -}
-
-	
-	
-	
-
-
-	
