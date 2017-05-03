@@ -29,7 +29,7 @@ isGameOver bd = length intact == 0 where
 	Checks if a ship of length n can be placed at (x,y) in a board
 	and a specific position (dir)
 -}
-isShipPlaceable :: Int -> Int -> Int -> Bool -> [[Int]] -> Bool
+isShipPlaceable :: Int -> Int -> Int -> Bool -> [Row] -> Bool
 isShipPlaceable 0 x y dir board = True
 isShipPlaceable n x y dir board 
     |(coord == 0)&&(dir == False)&&((n+y) < 11) = isShipPlaceable (n-1) x (y+1) dir board
@@ -40,7 +40,7 @@ isShipPlaceable n x y dir board
 {-
 	Places a ship of size n on (x,y) with a specific direction (dir) in the board
 -}
-placeShip :: Int -> Int -> Int -> Bool -> [[Int]] -> [[Int]] 
+placeShip :: Int -> Int -> Int -> Bool -> [Row] -> [Row] 
 placeShip n x y dir board 
     | (dir == True) = deconcat (length board) (take (index - 1) concatBoard ++ replicate n n ++ drop ((index - 1) + n) concatBoard)
 	| (dir == False) = deconcat (length board) (take (index - 1) concatBoard ++ replaceCell n n ((length board) - 1) (drop (index-1) concatBoard)) where 
@@ -49,7 +49,7 @@ placeShip n x y dir board
 replaceCell 0 ship len list = list
 replaceCell n ship len (h:t) = [ship] ++ take (len) t ++ replaceCell (n-1) ship len (drop len t)
 
-deconcat :: Int -> [Int] -> [[Int]]
+deconcat :: Int -> [Int] -> [Row]
 deconcat n [] = []
 deconcat n list = take n list : deconcat n (drop n list)
 
@@ -66,7 +66,7 @@ isHit x y board
     and y are 1-based column and row indices. A new board is
     returned.
 -}   
-hitBoard :: Int -> Int -> [[Int]] -> [[Int]]
+hitBoard :: Int -> Int -> [Row] -> [Row]
 hitBoard x y board
     | shot > 0 = deconcat (length board) (take (index-1) concatBoard ++ [-shot] ++ drop (index) concatBoard) -- if the shot is a hit then (x,y) value becomes negative
     | shot == 0 = deconcat (length board) (take (index-1) concatBoard ++ [-1] ++ drop (index) concatBoard) -- if the shot is a miss then (x,y) becomes a -1
