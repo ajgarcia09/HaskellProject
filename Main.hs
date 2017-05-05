@@ -15,8 +15,17 @@ import System.IO
 import System.Random
 import Board
 
+{-Reads input coordinates x and y from the user 
+as a string and and converts them into integers
+to make shots to the board
+-} 
+
 convertStringToInt :: String -> Int
 convertStringToInt [x] = ((ord x) - (ord '0'))
+
+{-Places ships on a board using a random x,y coordinate if
+the given ship fits in the desired coordinate on the board
+-}
 
 placeShips h board = do 
 	x <- randomRIO (0,9) :: IO Int
@@ -32,6 +41,10 @@ placeShips h board = do
 		then return ((placeShip h (x::Int) (y::Int) False board)::Board)
 		else placeShips h board
 
+{-Game is played by asking the user for x and y coordinates
+and checking if that spot has been hit on the board. If it
+hasn't, then the board is hit until all ships are hit and sunk
+-} 
 play board = do
 	boardToStr sqToStr board
 	if isGameOver board
@@ -51,6 +64,9 @@ play board = do
 			let newBoard = hitBoard cx cy board
 			play newBoard
 	
+{-Play cheat board allows the user to see the locations
+on the board on which each ship is placed during the game
+-}
 playCheat board = do
 	boardToStr sqToStrCheat board
 	if isGameOver board
@@ -69,6 +85,11 @@ playCheat board = do
 		else do
 			let newBoard = hitBoard cx cy board
 			play newBoard
+
+{-A board game is initialized by placing ships one by one
+and then starting the appropriate game mode, either regular
+or cheat mode
+-}
 	
 execute board = do
 	board <- placeShips 5 board
