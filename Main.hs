@@ -22,6 +22,25 @@ placeShips h board = do
 		else placeShips h board
 
 play board = do
+	boardToStr sqToStr board
+	if isGameOver board
+	then do return "Game Over"
+	else do
+		putStrLn ("Input X coordinate to shoot")
+		coordX <- getLine
+		let cx = convertStringToInt coordX
+		putStrLn ("Input Y coordinate to shoot")
+		coordY <- getLine
+		let cy = convertStringToInt coordY
+		if (isHit cx cy board) 
+		then do
+			putStrLn ("Error: Invalid shot.")
+			play board
+		else do
+			let newBoard = hitBoard cx cy board
+			play newBoard
+	
+playCheat board = do
 	boardToStr sqToStrCheat board
 	if isGameOver board
 	then do return "Game Over"
@@ -32,8 +51,6 @@ play board = do
 		putStrLn ("Input Y coordinate to shoot")
 		coordY <- getLine
 		let cy = convertStringToInt coordY
-		-- let newBoard = hitBoard cx cy board
-		-- play newBoard
 		if (isHit cx cy board) 
 		then do
 			putStrLn ("Error: Invalid shot.")
@@ -41,7 +58,7 @@ play board = do
 		else do
 			let newBoard = hitBoard cx cy board
 			play newBoard
-		
+	
 execute board = do
 	board <- placeShips 5 board
 	board <- placeShips 4 board
@@ -49,3 +66,11 @@ execute board = do
 	board <- placeShips 2 board
 	board <- placeShips 2 board
 	play board
+	
+executeCheat board = do
+	board <- placeShips 5 board
+	board <- placeShips 4 board
+	board <- placeShips 3 board
+	board <- placeShips 2 board
+	board <- placeShips 2 board
+	playCheat board
