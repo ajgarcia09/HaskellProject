@@ -81,10 +81,10 @@ playCheat board = do
 		if (isHit cx cy board) 
 		then do
 			putStrLn ("Error: Invalid shot.")
-			play board
+			playCheat board
 		else do
 			let newBoard = hitBoard cx cy board
-			play newBoard
+			playCheat newBoard
 
 {-A board game is initialized by placing ships one by one
 and then starting the appropriate game mode, either regular
