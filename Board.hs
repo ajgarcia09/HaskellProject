@@ -6,7 +6,7 @@
 	Objective: To understand the concepts of
 		functional programming and have a taste of it by writing a small
 		Haskell program.
-	Last updated: 05/03/2017
+	Last updated: 05/04/2017
 -}
 
 module Board where
@@ -15,6 +15,7 @@ module Board where
 	Creates a board of size n*n
 -}
 type Row = [Int]
+type Board = [Row]
 mkboard :: Int -> [Row]
 mkboard n = take n (repeat(take n(repeat 0)))
 
@@ -35,7 +36,7 @@ isShipPlaceable n x y dir board
     |(coord == 0)&&(dir == False)&&((n+y) < 11) = isShipPlaceable (n-1) x (y+1) dir board
     |(coord == 0)&&(dir == True)&&((n+x) < 11) = isShipPlaceable (n-1) (x+1) y dir board
     |otherwise = False
-        where coord = board !!x !!y
+        where coord = board !!y !!x
 
 {-
 	Places a ship of size n on (x,y) with a specific direction (dir) in the board
@@ -57,7 +58,7 @@ deconcat n list = take n list : deconcat n (drop n list)
 	Checks whether a place (x,y) has been hit on a board
 -}
 isHit x y board
-    |shot < 0 = True
+    | shot < 0 = True
     |otherwise = False
     where shot = board !!y !!x
 
@@ -74,6 +75,7 @@ hitBoard x y board
         index = (y * length board) + (x+1)
         concatBoard = concat board
         shot = board !!y !!x
+		
 
 {-
 	Draws a board "board" depending of the marker chosen
