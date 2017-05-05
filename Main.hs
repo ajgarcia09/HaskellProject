@@ -1,3 +1,14 @@
+{-
+	Author: Ana Garcia & Cristian Ayub
+	Professor: Dr. Yoonsik Cheon
+	TA: Sheikh Naim
+	Assignment: Project #3 - Functional Programmin Using Haskell
+	Objective: To understand the concepts of
+		functional programming and have a taste of it by writing a small
+		Haskell program.
+	Last updated: 05/04/2017
+-}
+
 import Data.Char
 import Data.List
 import System.IO
